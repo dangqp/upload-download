@@ -13,7 +13,6 @@ import javax.servlet.MultipartConfigElement;
  * Title:com.example.uploaddemo.config
  * Description:
  * Copyright: Copyright (c) 2018
- * Company: 北京思特奇信息技术股份有限公司
  *
  * @author dangqp
  * @version 1.0
