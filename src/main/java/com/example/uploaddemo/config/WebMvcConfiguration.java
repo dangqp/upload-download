@@ -8,8 +8,9 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import javax.servlet.MultipartConfigElement;
+import java.io.File;
 
-@Configuration
+//@Configuration
 public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
 
     @Value("${image.upload.path}")
@@ -23,7 +24,11 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
 
     @Value("${file.staticDir}")
     private String staticDir;
-    
+
+
+    @Value("${server.tomcat.basedir}")
+    private String temp;
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         //上传的图片在C盘下的uploadFiles目录下，访问路径如： http://localhost:8081/uploadFiles/d3cf0281-bb7f-40e0-ab77-406db95ccf2c.jpg
@@ -42,7 +47,12 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public MultipartConfigElement multipartConfigElement() {
         MultipartConfigFactory factory = new MultipartConfigFactory();
-        factory.setLocation(filePath);
+        String path = System.getProperty("user.dir") + temp;
+        File file = new File(path);
+        if (!file.exists()){
+            file.mkdirs();
+        }
+        factory.setLocation(temp);
         //单个文件最大
         factory.setMaxFileSize("10240KB"); //KB,MB
         /// 设置总上传数据总大小

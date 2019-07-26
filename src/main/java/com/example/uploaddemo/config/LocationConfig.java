@@ -8,6 +8,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import javax.servlet.MultipartConfigElement;
+import java.io.File;
 
 /**
  * Title:com.example.uploaddemo.config
@@ -27,10 +28,26 @@ public class LocationConfig {
     @Value("${file.upload.path}")
     private String filePath;
 
+    /**
+     * 配置文件上传临时路径
+     * @return
+     */
     @Bean
     MultipartConfigElement multipartConfigElement() {
         MultipartConfigFactory factory = new MultipartConfigFactory();
-        factory.setLocation(filePath);
+//        String path = System.getProperty("user.dir") + filePath;
+        //-----------------------------------------------
+        String userDir = System.getProperty("user.dir");
+        String path = userDir + filePath;
+        File file = new File(path);
+        if (!file.exists()){
+            file.mkdirs();
+        }
+        //-----------------------------------------------
+        /**
+         * 不加上边代码，配置的临时保存路径为C:\Users\Administrator\AppData\Local\Temp\tomcat.xxx.port\filePath
+         */
+        factory.setLocation(path);
         return factory.createMultipartConfig();
     }
 
