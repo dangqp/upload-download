@@ -1,6 +1,7 @@
 package com.example.uploaddemo.controller;
 
 import com.example.uploaddemo.service.FileDealService;
+import com.example.uploaddemo.service.FileDealServiceImpl;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,13 @@ public class UploadConttroller {
 
     /** 文件存放的目录 **/
     private static String fileDir = "/upload/";
-    
+
+    /**
+     * 该方法回将文件上传到指定目录
+     * 使用download可以
+     * @param file
+     * @return
+     */
     @PostMapping("/upload")
     public String upload(@RequestPart("file") MultipartFile file) {
 
@@ -71,9 +78,21 @@ public class UploadConttroller {
         return fileToSave.getAbsolutePath();
     }
 
+    /**
+     * 注入同一个接口的不同实现
+     */
     @Autowired
-    FileDealService fileDealService;
+    FileDealService fileDealServiceImpl;
 
+    @Autowired
+    FileDealService fileDealServiceServerImpl;
+
+    /**
+     * 该方法回将文件上传到生成的classes文件resource下
+     * 使用downliadFile可以正常下载
+     * @param file
+     * @return
+     */
     @PostMapping("/upload1")
     public String upload1(@RequestPart("file") MultipartFile file) {
 
@@ -81,11 +100,10 @@ public class UploadConttroller {
         if (StringUtils.isEmpty(filename))
             return null;
 
-
         InputStream inputStream = null;
         try {
             inputStream = file.getInputStream();
-            return fileDealService.upload(inputStream,filename);
+            return fileDealServiceImpl.upload(inputStream,filename);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -97,14 +115,16 @@ public class UploadConttroller {
 
         //String fileName = "1542175634808.txt";
         String path = "static/file/";
-        fileDealService.downLoad(request,response,fileName,path);
+        //fileDealService.downLoad(request,response,fileName,path); //适合下载classpath下已经存在的文件
+        //可下载指定目录下的文件
+        fileDealServiceServerImpl.downLoad(request,response,fileName,path);
 
     }
 
     @GetMapping("/show")
     public void show(HttpServletRequest request, HttpServletResponse response,@RequestParam("fileName") String fileName){
         String fileName1 = fileName==null?"static/file/1542178030837.jpg":"static/file/"+fileName;
-        fileDealService.getPhoto(response,fileName1);
+        fileDealServiceImpl.getPhoto(response,fileName1);
         
     }
 
